@@ -1,12 +1,11 @@
 import { Response, NextFunction } from "express";
-import { AuthRequest } from "./authMiddleware";
+import { AppError } from "../utils/AppError";
 
 export const authorizeRoles = (...roles: string[]) => {
-  return (req: AuthRequest, res: Response, next: NextFunction) => {
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ message: "Access denied" });
+  return (req: any, res: any, next: any) => {
+    if (!roles.includes(req.user.Role?.name)) {
+      throw new AppError("Forbidden", 403);
     }
-
     next();
   };
 };

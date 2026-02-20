@@ -1,35 +1,27 @@
-import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-
-dotenv.config();
+import { AppError } from "../utils/AppError";
+import User from "../models/User";
+import { asyncHandler } from "../utils/asyncHandler";
 
 export interface AuthRequest extends Request {
-  user?: any;
+  user?: any; // ideally: User instance type
 }
 
-export const authenticate = (
-  req: AuthRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  const authHeader = req.headers.authorization;
+export const protect = asyncHandler(async (req: any, res: any, next: any) => {
+  const token = req.headers.authorization?.split(" ")[1];
 
-  if (!authHeader) {
-    return res.status(401).json({ message: "No token provided" });
+  if (!token) {
+    throw new AppError("Not authorized", 401);
   }
 
-  const token = authHeader.split(" ")[1];
+  const decoded: any = jwt.verify(token, process.env.JWT_SECRET as string);
 
-  try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET as string
-    );
+  const user = await User.findByPk(decoded.id);
 
-    req.user = decoded;
-    next();
-  } catch (error) {
-    return res.status(401).json({ message: "Invalid token" });
+  if (!user) {
+    throw new AppError("User not found", 404);
   }
-};
+
+  req.user = user;
+  next();
+});

@@ -43,11 +43,6 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 .parcel-cache
 
 # IDE specific files (e.g., VS Code)
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
 .history # VS Code history extension
 
 # Testing coverage
@@ -57,3 +52,7 @@ coverage
 # OS specific files
 .DS_Store # macOS specific
 Thumbs.db # Windows specific
+temp_auto_push.bat
+temp_interactive_push.bat
+.gitignore
+branch_structure.json
