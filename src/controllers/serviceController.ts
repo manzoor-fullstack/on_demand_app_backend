@@ -28,3 +28,34 @@ export const getAllServices = asyncHandler(
     res.json(services);
   }
 );
+
+export const updateService = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const service = await Service.findByPk(id);
+  if (!service) {
+    throw new AppError("Service not found", 404);
+  }
+
+  await service.update(req.body);
+
+  res.json({
+    message: "Service updated",
+    service,
+  });
+});
+
+export const deleteService = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const service = await Service.findByPk(id);
+  if (!service) {
+    throw new AppError("Service not found", 404);
+  }
+
+  await service.destroy();
+
+  res.json({
+    message: "Service deleted",
+  });
+});
